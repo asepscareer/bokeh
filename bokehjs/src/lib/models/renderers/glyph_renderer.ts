@@ -167,10 +167,6 @@ export class GlyphRendererView extends DataRendererView {
 
     this.all_indices = this.model.view.indices
 
-    // TODO (bev) this is a bit clunky, need to make sure glyphs use the correct ranges when they call
-    // mapping functions on the base Renderer class
-    this.glyph.model.setv({x_range_name: this.model.x_range_name,
-                           y_range_name: this.model.y_range_name}, {silent: true})
     this.glyph.set_data(source, this.all_indices, indices)
 
     this.glyph.set_visuals(source, this.all_indices)

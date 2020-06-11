@@ -269,8 +269,9 @@ export abstract class GlyphView extends View {
     // if we have any coordinates that are categorical, convert them to
     // synthetic coords here
     if (this.renderer.plot_view.frame.x_ranges != null) {   // XXXX JUST TEMP FOR TESTS TO PASS
-      const xr = this.renderer.plot_view.frame.x_ranges[this.model.x_range_name]
-      const yr = this.renderer.plot_view.frame.y_ranges[this.model.y_range_name]
+      const {x_range_name, y_range_name} = this.renderer.model
+      const xr = this.renderer.plot_view.frame.x_ranges[x_range_name]
+      const yr = this.renderer.plot_view.frame.y_ranges[y_range_name]
 
       // XXX: MultiPolygons is a special case of special cases
       if (this.model.type != "MultiPolygons") {
@@ -363,17 +364,15 @@ export abstract class GlyphView extends View {
   protected _map_data(): void {}
 
   map_to_screen(x: Arrayable<number>, y: Arrayable<number>): [NumberArray, NumberArray] {
-    return this.renderer.plot_view.map_to_screen(x, y, this.model.x_range_name, this.model.y_range_name)
+    const {x_range_name, y_range_name} = this.renderer.model
+    return this.renderer.plot_view.map_to_screen(x, y, x_range_name, y_range_name)
   }
 }
 
 export namespace Glyph {
   export type Attrs = p.AttrsOf<Props>
 
-  export type Props = Model.Props & {
-    x_range_name: p.Property<string>
-    y_range_name: p.Property<string>
-  }
+  export type Props = Model.Props
 
   export type Visuals = visuals.Visuals
 }
@@ -392,11 +391,6 @@ export abstract class Glyph extends Model {
 
   static init_Glyph(): void {
     this.prototype._coords = []
-
-    this.internal({
-      x_range_name: [ p.String, 'default' ],
-      y_range_name: [ p.String, 'default' ],
-    })
   }
 
   static coords(coords: [string, string][]): void {
